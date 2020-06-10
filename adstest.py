@@ -29,20 +29,6 @@ exp1_r2 = 27000 # Widerstand R2 für den Spannungsteiler Eingangsspannung
 
   
 # Funktionen
-# Mit dieser Funktion werden Strom und Spannung von der gewünschten Platine abgerufen
-def ACS_EingangsMessung_raw(adcnr):
-    if adcnr == adc1:
-        #print('ADC1:')
-        ad1_spannung_raw = adcnr.read_adc(2,gain=GAIN, data_rate=128)
-        ad1_strom_raw = adcnr.read_adc_difference(0, gain=GAIN, data_rate=None)
-        # volt = (float(raw)*4.096)/32768.0
-        # volt_diff = (float(raw_diff)*4.096)/32768.0
-        return ad1_spannung_raw, ad1_strom_raw
-    elif adcnr == adc2:
-        #print('ADC2:')
-        ad2_spannung_raw = adcnr.read_adc(2,gain=GAIN, data_rate=128)
-        ad2_strom_raw = adcnr.read_adc_difference(0, gain=GAIN, data_rate=None)
-        return ad2_spannung_raw, ad2_strom_raw
 
 # ACS messen, Werte berechnen, als Print ausgeben
 def Messung(adcnr):
