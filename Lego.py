@@ -1,7 +1,6 @@
 # folgender Code nur rauskopiert und somit bereits vorhanden
 
 import brickpi3 # benötigt für Kommunikation mit Brick Pi / importiert BrickPi3-Methoden
-import sys # für sys.exit()
 import time # für time.sleep
 
 BP = brickpi3.BrickPi3() # es wird eine Instanz der BrickPi3-Klasse erzeugt # BP wird als BrickPi-Objekt festgelegt
