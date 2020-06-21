@@ -29,7 +29,7 @@ messwerte = [['Datum','Uhrzeit','Spannung (V)', 'Strom (A)', 'Leistung (P)']]
 
 def csv_schreiben(werte):
     with open('logdatei.csv', 'w', newline='') as csvfile:
-        filewriter = csv.writer(csvfile)
+        filewriter = csv.writer(csvfile, delimiter=';')
         filewriter.writerows(werte)
 
 def Messung(adcnr):
