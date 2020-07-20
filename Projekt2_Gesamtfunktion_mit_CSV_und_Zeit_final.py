@@ -64,8 +64,10 @@ taster = 23 # Pin Nummer des zu verwendenden GPIO für den Start-Taster
 GPIO.setmode(GPIO.BCM) # Nummerierungsschema BCM verwenden
 GPIO.setup(taster, GPIO.IN, pull_up_down=GPIO.PUD_UP) # GPIO konfigurieren
 
-# Bereitschaftsmeldung bei Programmstart
-oled.canvas.text((5,10), 'LOS...', fill=1)
+# Bereitschaftsmeldung bei Programmstart auf dem Display
+oled.canvas.text((15,10), 'Warte', fill=1)
+oled.canvas.text((15,20), 'auf', fill=1)
+oled.canvas.text((15,30), 'Start...', fill=1)
 oled.display()
 
 # kleine Helferfunktion für die Displayausgabe
@@ -96,10 +98,11 @@ def doIfHigh1(): # diese doIfHigh-Funktion nur für Start über input-Befehl "St
     else:
         print("Wiederholen Sie die Eingabe: ")
         return doIfHigh1()    
-    
+
+# in dieser Funktion soll der Start-Taster abgefragt werden. Drücken des Tasters toggelt den Zustand und ermöglicht das Losfahren
 def doIfHigh2(): # tatsächliche doIfHigh-Funktion für Tasterabfrage
     
-    status = 0 # Setze ein 'status' flag als Zustandsspeicher für den Taster
+    status = 0 # Setze ein 'status' flag als Zustandsspeicher für den Taster (bei Aufruf der Funktion auf 0 setzen -> definierter Startzustand)
     while True: 
         buttonState = GPIO.input(taster) # Abfrage des GPIO Status
         #print(buttonState)
@@ -107,7 +110,7 @@ def doIfHigh2(): # tatsächliche doIfHigh-Funktion für Tasterabfrage
         # und gegen GND schaltet)
         if buttonState == 0:
           time.sleep(0.5)
-          # Diese Zeilen toggeln den Zustand. 
+          # Diese Zeilen toggeln den Zustand.
           if status==0:
             status=1
           else:
@@ -138,8 +141,8 @@ def set_sensor_oben():
                 global oben_time # globale Variable, um in anderen Funktionen damit arbeiten zu können
                 oben_time = uhr.datetime.now() # speichere den zeitpunkt, an dem der obere Anschlag erkannt worden ist
                 diff = oben_time - begin_time # benötigte Zeit für den Weg nach oben berechnen
-                print(diff)
-                print("oben erkannt")
+                print('Benötigte Zeit nach oben: {:.4f}s'.format(diff))
+                print("Oben erkannt, drehe um...")
                 return True
             else:
                 return False
@@ -181,7 +184,8 @@ def move(value, starter):
                 # eventuell muss mit der Position des Aufrufs noch gespielt werden, also wann das aufgerufen wird
                 #
                 difftime = end_time - begin_time # benötigte Zeit für die gesamte Wegstrecke
-                print(difftime)
+                print('Wagen wieder unten angekommen. Schalte Motor aus.')
+                print('Benötigte Zeit für Gesamtstrecke: {:.4f}s'.format(difftime))
                 csv_schreiben(messwerte) # Logdatei schreiben
                 #BP.reset_all()                                         
                 # aus der schleife raus
@@ -194,13 +198,14 @@ def move(value, starter):
 # Funktionsaufruf
 try:
     while True:
+        print('Warte auf Start-Taster...')
         begin = doIfHigh2()  # schaltet das Programm auf "Bereitschaft" -> Warten auf drücken des Start Knopfes
         # Motordrehzahl = 100
         value = 100
         
         # Nur starten, wenn der Wagen am unteren Anschlag liegt
         if set_sensor_unten() and begin:
-            print("Start unten")
+            print("Startbedingung erfüllt, starte Motor...")
             global begin_time # globale Variable, um in anderen Funktionen damit arbeiten zu können 
             begin_time = uhr.datetime.now() # Startzeitpunkt speichern
             BP.set_motor_power(BP.PORT_A, value) # Motor auf Port A mit der gewünschten Drehzahl starten
