@@ -7,6 +7,7 @@ from smbus import SMBus # Bibliothek für I2C Kommunikation
 from ADS1x15 import ADS1115 # Bibliothek für AD-Wandler
 import csv #wird benötigt für die Logdatei
 import datetime as uhr # Zur Zeitmessung
+import plotter # kleines Modul zur Ausgabe der Messung als Graph - benötigt matplotlib
 
 
 
@@ -31,7 +32,7 @@ messwerte = [['Datum','Uhrzeit','Spannung (V)', 'Strom (A)', 'Leistung (P)']]
 # Funktionsdefinitionen
 # Schreibt die Werte in die Logdatei
 def csv_schreiben(werte):
-    with open('messwerte_reihe5_160720.csv', 'w', newline='') as csvfile:
+    with open('messwerte_reihe3_22072020.csv', 'w', newline='') as csvfile:
         filewriter = csv.writer(csvfile)
         filewriter.writerows(werte)
 
@@ -190,6 +191,8 @@ def move(value, starter):
                 #BP.reset_all()                                         
                 # aus der schleife raus
                 stat = False # damit wird die Schleife beendet
+                # Starte den Plotter mit der angegebenen Messreihe
+                plotter.plot_graph('messwerte_reihe3_bat_22072020.csv')
             time.sleep(0.05)
     #except:
         #print("Fehler im Bewegungsablauf. Bitte prüfen!")              
